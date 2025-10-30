@@ -1,13 +1,383 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/png" href="" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>abduls-portfolio</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Abdul Razzaq — Portfolio</title>
+  <style>
+    /* ---------- RESET & BASE ---------- */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html,body { height: 100%; }
+    body {
+      font-family: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: linear-gradient(180deg,#0b1220 0%, #0f172a 50%, #071022 100%);
+      color: #e6eef8;
+      overflow-x: hidden;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+    a { color: inherit; text-decoration: none; }
+
+    /* ---------- NAVBAR ---------- */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1200;
+      display: flex;
+      justify-content: center;
+      padding: 14px 20px;
+      backdrop-filter: blur(8px);
+      background: rgba(8,12,20,0.6);
+      border-bottom: 1px solid rgba(59,130,246,0.12);
+    }
+    .nav-list { display:flex; gap:22px; list-style:none; align-items:center; }
+    .nav-list li { cursor:pointer; text-transform:capitalize; color:#cfe8ff; font-weight:600; transition: color .18s; }
+    .nav-list li:hover { color:#7dd3fc; }
+
+    /* ---------- ANIMATED BACKGROUND ---------- */
+    .bg-anim { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow:hidden; }
+    .glow { position:absolute; width:420px; height:420px; border-radius:50%; filter: blur(120px); opacity:0.6; transform: translate3d(0,0,0); }
+    .blue { background:#3b82f6; top:10%; left:8%; animation: pulse 12s ease-in-out infinite; }
+    .purple { background:#8b5cf6; bottom:12%; right:8%; animation: pulse 12s ease-in-out 1s infinite; }
+    .pink { background:#ec4899; top:45%; left:48%; animation: pulse 12s ease-in-out 2s infinite; }
+    @keyframes pulse { 0%{transform:scale(1);opacity:.6}50%{transform:scale(1.25);opacity:.35}100%{transform:scale(1);opacity:.6} }
+
+    .particle { position:absolute; width:8px;height:8px;border-radius:999px;background:rgba(96,165,250,0.35); animation: float linear infinite; }
+    @keyframes float { 0%{transform:translateY(0) translateX(0)}25%{transform:translateY(-18px) translateX(10px)}50%{transform:translateY(-36px) translateX(-10px)}75%{transform:translateY(-18px) translateX(10px)}100%{transform:translateY(0) translateX(0)} }
+
+    /* ---------- PAGE LAYOUT ---------- */
+    .container { position: relative; z-index: 2; padding-top:84px; } /* leave room for nav */
+    section { padding: 80px 6% 100px; min-height: 70vh; display:flex; flex-direction:column; align-items:center; gap:22px; }
+    .center-wrap { max-width: 1100px; width:100%; }
+
+    h1 { font-size:42px; color: transparent; background: linear-gradient(90deg,#60a5fa,#a78bfa); -webkit-background-clip:text; font-weight:800; text-align:center; }
+    .subtitle { text-align:center; color:#9cc6ff; }
+
+    /* ---------- HERO ---------- */
+    .hero { justify-content:center; gap:18px; text-align:center; padding-top:120px; padding-bottom:80px; }
+    .hero p { color:#cbd5e1; font-size:18px; margin-top:6px; }
+
+    /* ---------- ABOUT ---------- */
+    .section-box {
+      background: rgba(31, 41, 55, 0.6);
+      border: 1px solid rgba(96, 165, 250, 0.12);
+      border-radius: 18px;
+      padding: 28px;
+      box-shadow: 0 8px 30px rgba(59,130,246,0.04);
+      backdrop-filter: blur(8px);
+    }
+    .section-box p { color:#d1d5db; line-height:1.75; }
+
+    /* ---------- SKILLS ---------- */
+    h2 { font-size:28px; text-align:center; margin-bottom:6px; background: linear-gradient(90deg,#60a5fa,#a78bfa); -webkit-background-clip:text; color:transparent; font-weight:800; }
+    .skills-grid {
+      display:grid;
+      grid-template-columns: repeat(2,minmax(0,1fr));
+      gap:18px;
+      margin-top:14px;
+    }
+    @media(min-width:720px){ .skills-grid { grid-template-columns: repeat(3,minmax(0,1fr)); } }
+    @media(min-width:1024px){ .skills-grid { grid-template-columns: repeat(4,minmax(0,1fr)); } }
+
+    .skill-box {
+      background: linear-gradient(135deg, rgba(59,130,246,0.08), rgba(168,85,247,0.06));
+      border: 1px solid rgba(96,165,250,0.12);
+      border-radius:14px;
+      padding:22px;
+      min-height:130px;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      align-items:center;
+      text-align:center;
+      transition: transform .28s ease, box-shadow .28s ease, border-color .28s ease;
+      cursor:pointer;
+      backdrop-filter: blur(6px);
+      color:#e6eef8;
+    }
+    .skill-box h4 { font-size:16px; margin-top:8px; font-weight:700; color:#f8fbff; }
+    .skill-cat { font-size:12px; color:#93c5fd; margin-top:6px; }
+
+    .skill-box:hover { transform: translateY(-6px); border-color: rgba(96,165,250,0.28); box-shadow: 0 10px 30px rgba(59,130,246,0.06); }
+    .skill-box.enlarged { transform: scale(1.28); z-index:8; position:relative; background: rgba(96,165,250,0.08); }
+
+    /* ---------- PROJECTS ---------- */
+    .projects-grid {
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:20px;
+      margin-top:18px;
+    }
+    @media(min-width:820px){ .projects-grid { grid-template-columns: 1fr 1fr; } }
+
+    .project-box {
+      background: rgba(31,41,55,0.62);
+      border: 1px solid rgba(96,165,250,0.12);
+      border-radius:14px;
+      padding:20px;
+      transition: transform .28s ease, box-shadow .28s ease, border-color .28s ease;
+      backdrop-filter: blur(6px);
+    }
+    .project-box:hover { transform: translateY(-6px); border-color: rgba(96,165,250,0.28); box-shadow: 0 18px 40px rgba(59,130,246,0.04); }
+
+    .project-title { color:#7dd3fc; font-weight:700; font-size:16px; margin-bottom:8px; display:flex; gap:8px; align-items:center; }
+    .project-desc { color:#cbd5e1; line-height:1.6; margin-bottom:10px; }
+    .tech-tags { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:12px; }
+    .tag { background: rgba(96,165,250,0.12); color:#93c5fd; padding:6px 10px; border-radius:999px; font-size:13px; }
+
+    .proj-links { display:flex; gap:14px; }
+    .proj-links a { color:#93c5fd; font-weight:600; text-decoration:none; transition: color .2s ease; }
+    .proj-links a:hover { color:#c084fc; text-decoration:underline; }
+
+    /* ---------- CONTACT & FOOTER ---------- */
+    .contact-row { display:flex; gap:22px; justify-content:center; align-items:center; margin-top:8px; flex-wrap:wrap; }
+    .contact-btn { background: linear-gradient(90deg,#60a5fa,#a78bfa); color:#071022; padding:10px 14px; border-radius:10px; font-weight:700; text-decoration:none; }
+
+    footer { text-align:center; color:#9fbcee; padding:24px 12px; border-top: 1px solid rgba(96,165,250,0.06); margin-top:26px; }
+
+    /* ---------- FADE-IN ON SCROLL ---------- */
+    .reveal { opacity: 0; transform: translateY(12px); transition: opacity .6s ease, transform .6s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* ---------- SMALL SCREENS ---------- */
+    @media(max-width:540px){
+      h1 { font-size:28px; }
+      section { padding: 48px 4% 80px; }
+      .skill-box { padding:16px; min-height:110px; }
+      .project-box { padding:14px; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Animated background and particles -->
+  <div class="bg-anim" aria-hidden="true">
+    <div class="glow blue"></div>
+    <div class="glow purple"></div>
+    <div class="glow pink"></div>
+  </div>
+
+  <!-- Navbar -->
+  <nav>
+    <ul class="nav-list">
+      <li onclick="scrollToSection('home')">home</li>
+      <li onclick="scrollToSection('about')">about</li>
+      <li onclick="scrollToSection('skills')">skills</li>
+      <li onclick="scrollToSection('projects')">projects</li>
+      <li onclick="scrollToSection('contact')">contact</li>
+    </ul>
+  </nav>
+
+  <div class="container">
+
+    <!-- HERO / HOME -->
+    <section id="home" class="hero reveal">
+      <div class="center-wrap">
+        <h1>Abdul Razzaq Munshi</h1>
+        <p class="subtitle">Computer Engineering Student — Full Stack Developer — ML Enthusiast</p>
+        <div style="display:flex;justify-content:center;margin-top:18px;">
+          <a class="contact-btn" href="#projects" onclick="scrollToSection('projects')">View My Work</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section id="about" class="reveal">
+      <div class="center-wrap section-box">
+        <h2 style="background: none; color:#f8fbff; text-align:left; margin-bottom:10px;">01. About Me</h2>
+        <p>
+          Hello! I'm <strong style="color:#60a5fa">Abdul Razzaq</strong>, a Computer Engineering undergraduate at
+          Veermata Jijabai Technological Institute (VJTI), Mumbai. I'm passionate about building intelligent, practical,
+          and scalable software systems that bring innovation to real-world applications. My interests include Machine Learning,
+          Full-stack Web Development, and Generative AI.
+        </p>
+      </div>
+    </section>
+
+    <!-- SKILLS -->
+    <section id="skills" class="reveal">
+      <div class="center-wrap">
+        <h2>02. My Tech Stack</h2>
+        <div class="subtitle">Click on any skill to enlarge</div>
+        <div class="card-wrap">
+          <div class="skills-grid" id="skillsGrid">
+            <!-- JS populates skill boxes -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROJECTS -->
+    <section id="projects" class="reveal">
+      <div class="center-wrap">
+        <h2>03. Projects</h2>
+        <div class="card-wrap">
+          <div class="projects-grid" id="projectsGrid">
+            <!-- JS populates project cards -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact" class="reveal">
+      <div class="center-wrap section-box">
+        <h2 style="background: none; color:#f8fbff; text-align:left; margin-bottom:10px;">04. Contact</h2>
+        <p>
+          I'm open to collaboration, freelance work, or project discussions. Reach out and let's build something great.
+        </p>
+        <div class="contact-row" style="margin-top:14px;">
+          <a class="contact-btn" href="mailto:armunshi02@gmail.com">Email Me</a>
+          <a class="contact-btn" href="https://github.com/Armunshi" target="_blank">GitHub</a>
+          <a class="contact-btn" href="https://www.linkedin.com/in/abdul-razzaq-munshi-119558286/" target="_blank">LinkedIn</a>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      © <span id="year"></span> Abdul Razzaq Munshi — All rights reserved.
+    </footer>
+  </div>
+
+  <script>
+    /* ---------- Small helpers ---------- */
+    function scrollToSection(id){
+      document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    // year
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    /* ---------- create floating particles ---------- */
+    (function createParticles(){
+      const bg = document.querySelector('.bg-anim');
+      for(let i=0;i<20;i++){
+        const d = document.createElement('div');
+        d.className = 'particle';
+        d.style.left = Math.random()*100 + '%';
+        d.style.top = Math.random()*100 + '%';
+        const size = 6 + Math.random()*10;
+        d.style.width = size + 'px';
+        d.style.height = size + 'px';
+        d.style.opacity = 0.12 + Math.random()*0.45;
+        d.style.animationDuration = (10 + Math.random()*10) + 's';
+        d.style.animationDelay = (Math.random()*5) + 's';
+        bg.appendChild(d);
+      }
+    })();
+
+    /* ---------- SKILLS (from your React techStack) ---------- */
+    const skills = [
+      { skill: 'Python', category: 'Languages' },
+      { skill: 'JavaScript', category: 'Languages' },
+      { skill: 'TypeScript', category: 'Languages' },
+      { skill: 'Java', category: 'Languages' },
+      { skill: 'C/C++', category: 'Languages' },
+      { skill: 'HTML/CSS', category: 'Frontend' },
+      { skill: 'React.js', category: 'Frontend' },
+      { skill: 'Next.js', category: 'Frontend' },
+      { skill: 'Tailwind CSS', category: 'Frontend' },
+      { skill: 'Node.js', category: 'Backend' },
+      { skill: 'Express.js', category: 'Backend' },
+      { skill: 'FastAPI', category: 'Backend' },
+      { skill: 'MongoDB', category: 'Database' },
+      { skill: 'SQL/MariaDB', category: 'Database' },
+      { skill: 'TensorFlow', category: 'ML/AI' },
+      { skill: 'JWT', category: 'Backend' },
+      { skill: 'Git/GitHub', category: 'Tools' },
+      { skill: 'Postman', category: 'Tools' }
+    ];
+
+    const skillsGrid = document.getElementById('skillsGrid');
+    const icons = {
+      'Languages':'💻','Frontend':'🎨','Backend':'⚙️','Database':'🗄️','Tools':'🛠️','ML/AI':'🤖'
+    };
+
+    skills.forEach(s => {
+      const box = document.createElement('div');
+      box.className = 'skill-box';
+      box.innerHTML = `
+        <div class="icon" style="font-size:26px;">${icons[s.category] || '📦'}</div>
+        <h4>${s.skill}</h4>
+        <div class="skill-cat">${s.category}</div>
+      `;
+      box.addEventListener('click', () => {
+        box.classList.toggle('enlarged');
+        setTimeout(()=>box.classList.remove('enlarged'), 1000);
+      });
+      skillsGrid.appendChild(box);
+    });
+
+    /* ---------- PROJECTS (only Learn Stream & Persona Teacher Chatbot) ---------- */
+    const projects = [
+      {
+        title: 'Learn Stream',
+        description: 'A full-stack MERN platform enabling students to purchase courses, stream lectures, and track progress. Features JWT authentication, role-based access control, Razorpay payment integration, and real-time progress tracking.',
+        tech: ['React','Node.js','Express.js','MongoDB','JWT','RazorPay'],
+        github: 'https://github.com/Armunshi/What-the-Code-Learnstream/tree/abdulrazzaq',
+        live: 'https://learnstream.onrender.com/'
+      },
+      {
+        title: 'Persona Teacher Chatbot',
+        description: "An AI-powered chatbot using Google's Gemini API to simulate an interactive teacher persona. Built with FastAPI backend and responsive frontend, deployed for public access with real-time chat capabilities.",
+        tech: ['Python','FastAPI','Gemini API','JavaScript'],
+        github: 'https://github.com/Armunshi/genai-cohort',
+        live: 'https://flask-to-do-kcw6.onrender.com/'
+      }
+    ];
+
+    const projectsGrid = document.getElementById('projectsGrid');
+    projects.forEach(p => {
+      const card = document.createElement('div');
+      card.className = 'project-box';
+      const techHtml = (p.tech||[]).map(t => `<span class="tag">${t}</span>`).join('');
+      card.innerHTML = `
+        <div class="project-title">${p.title}</div>
+        <div class="project-desc">${p.description}</div>
+        <div class="tech-tags">${techHtml}</div>
+        <div class="proj-links">
+          <a href="${p.github}" target="_blank" rel="noopener noreferrer">GitHub</a>
+          ${p.live ? `<a href="${p.live}" target="_blank" rel="noopener noreferrer">Live Demo</a>` : ''}
+        </div>
+      `;
+      projectsGrid.appendChild(card);
+    });
+
+    /* ---------- REVEAL ON SCROLL (for sections & items) ---------- */
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if(e.isIntersecting) e.target.classList.add('visible');
+      });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+    // stagger reveal for skill / project items
+    function staggerReveal(selector){
+      const items = document.querySelectorAll(selector);
+      items.forEach((node, idx) => {
+        node.classList.add('reveal');
+        node.style.transitionDelay = (idx * 60) + 'ms';
+        revealObserver.observe(node);
+      });
+    }
+
+    // wait next paint to ensure nodes exist
+    requestAnimationFrame(()=> {
+      staggerReveal('.skill-box');
+      staggerReveal('.project-box');
+    });
+
+    /* ---------- small accessibility: keyboard nav for nav items ---------- */
+    document.querySelectorAll('.nav-list li').forEach(el => {
+      el.addEventListener('keydown', (e) => {
+        if(e.key === 'Enter' || e.key === ' ') {
+          el.click();
+        }
+      });
+      el.tabIndex = 0;
+    });
+  </script>
+</body>
 </html>
